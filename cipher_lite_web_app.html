@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cipher Lite - AI Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #f2f2f2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #00ff99;
+        }
+        textarea, button {
+            width: 90%;
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+        }
+        textarea {
+            height: 100px;
+            resize: none;
+        }
+        button {
+            background-color: #00ff99;
+            color: #000;
+            cursor: pointer;
+        }
+        #response {
+            margin-top: 20px;
+            background-color: #333;
+            padding: 15px;
+            border-radius: 5px;
+            width: 90%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cipher Lite AI</h1>
+    <textarea id="userInput" placeholder="Speak your mind, Jah..."></textarea>
+    <button onclick="sendToGPT()">Talk to Cipher</button>
+    <div id="response"></div>
+
+    <script>
+        async function sendToGPT() {
+            const input = document.getElementById("userInput").value;
+            const responseDiv = document.getElementById("response");
+            responseDiv.innerHTML = "Cipher typing...";
+
+            const API_KEY = "YOUR_OPENAI_API_KEY"; // 👈 Replace this with your API key
+
+            const res = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: "gpt-4",
+                    messages: [{ role: "user", content: input }]
+                })
+            });
+
+            const data = await res.json();
+            const reply = data.choices[0].message.content;
+            responseDiv.innerHTML = reply;
+            speak(reply);
+        }
+
+        function speak(text) {
+            const synth = window.speechSynthesis;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1;
+            synth.speak(utterance);
+        }
+    </script>
+</body>
+</html>
